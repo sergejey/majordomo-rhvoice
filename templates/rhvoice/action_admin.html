@@ -1,1 +1,55 @@
+[#if VIEW_MODE=""#]
+<div class="float-right">
+    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#about">
+        About&nbsp;&nbsp;<span class="glyphicon glyphicon-info-sign icon-white"></span>
+    </button>
+</div>
+<div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="about1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">RHVoice</h4>
+            </div>
+            <div class="modal-body">
+                <p> Модуль RHVoice.<br>
+                    Обсуждение модуля <a href="#" target="_blank">здесь</a>.<br>
+                </p>
+            </div>
 
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- -->
+<div id='api_settings'>
+    <form action="?" method="post" enctype="multipart/form-data" name="frmEdit" class="form-horizontal">
+        <fieldset>
+            <div class="form-group">
+                <label class="control-label"> Voice: </label>
+                <div class="col-lg-6">
+                    <select name="voice" id="voice" class="form-control">
+                        <option value="Aleksandr"[#if VOICE="Aleksandr"#] selected[#endif#]>Aleksandr</option>
+                        <option value="Elena"[#if VOICE="Elena"#] selected[#endif#]>Elena</option>
+                        <option value="Anna"[#if VOICE="Anna"#] selected[#endif#]>Anna</option>
+                        <option value="Anna+CLB"[#if VOICE="Anna+CLB"#] selected[#endif#]>Anna+CLB</option>
+                    </select> 
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="controls">
+                    <label><input type="checkbox" name="use_spd" value="1"[#if USE_SPD="1"#] checked[#endif#]>Use Speech Dispatcher</label>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_UPDATE#></button>
+                <input type="hidden" name="view_mode" value="update_settings">
+                <input type="hidden" name="mode" value="update">
+            </div>
+        </fieldset>
+    </form>
+</div>
+[#endif VIEW_MODE#]
