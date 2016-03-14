@@ -4,7 +4,7 @@
 * @package project
 * @author Dark_Veter <veter.dark@gmail.com>
 * @copyright Dark_Veter (c)
-* @version 0.1 (Dark_Veter, 15:03:33 [Mar 14, 2016])
+* @version 0.1 (wizard, 15:03:33 [Mar 14, 2016])
 */
 //
 //
@@ -147,6 +147,12 @@ function usual(&$out) {
   if ($event=='SAY') {
    $level=$details['level'];
    $message=$details['message'];
+   if ($level >= (int)getGlobal('minMsgLevel')) {
+     $out = '';
+     $voice = 'Anna+CLB';
+     //safe_exec('spd-say "'.$message.'" -w -y ' . $voice, 1, $out);
+     safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
+   }
    //...
   }
  }
