@@ -2,9 +2,9 @@
 /**
 * rhvoice 
 * @package project
-* @author Wizard <sergejey@gmail.com>
-* @copyright http://majordomo.smartliving.ru/ (c)
-* @version 0.1 (wizard, 15:03:33 [Mar 14, 2016])
+* @author Dark_Veter <veter.dark@gmail.com>
+* @copyright Dark_Veter (c)
+* @version 0.1 (Dark_Veter, 15:03:33 [Mar 14, 2016])
 */
 //
 //
@@ -18,7 +18,7 @@ class rhvoice extends module {
 */
 function rhvoice() {
   $this->name="rhvoice";
-  $this->title="rhvoice";
+  $this->title="RHVoice";
   $this->module_category="<#LANG_SECTION_APPLICATIONS#>";
   $this->checkInstalled();
 }
