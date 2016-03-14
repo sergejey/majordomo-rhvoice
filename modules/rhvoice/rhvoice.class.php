@@ -118,22 +118,16 @@ class rhvoice extends module {
      */
     function admin(&$out) {
         $this->getConfig();
-        $out['API_URL'] = $this->config['API_URL'];
-        if (!$out['API_URL']) {
-            $out['API_URL'] = 'http://';
+        $out['VOICE']=$this->config['VOICE'];
+        $out['USE_SPD']=$this->config['USE_SPD'];
+        if (!$out['VOICE']) {
+            $out['VOICE'] = 'Anna+CLB';
         }
-        $out['API_KEY'] = $this->config['API_KEY'];
-        $out['API_USERNAME'] = $this->config['API_USERNAME'];
-        $out['API_PASSWORD'] = $this->config['API_PASSWORD'];
         if ($this->view_mode == 'update_settings') {
-            global $api_url;
-            $this->config['API_URL'] = $api_url;
-            global $api_key;
-            $this->config['API_KEY'] = $api_key;
-            global $api_username;
-            $this->config['API_USERNAME'] = $api_username;
-            global $api_password;
-            $this->config['API_PASSWORD'] = $api_password;
+            global $voice;
+            $this->config['VOICE']=$voice;
+            global $use_spd;
+            $this->config['USE_SPD']=$use_spd;
             $this->saveConfig();
             $this->redirect("?");
         }
@@ -157,9 +151,14 @@ class rhvoice extends module {
             $message = $details['message'];
             if ($level >= (int) getGlobal('minMsgLevel')) {
                 $out = '';
+                $voice=$this->config['VOICE'];
                 $voice = 'Anna+CLB';
-                //safe_exec('spd-say "'.$message.'" -w -y ' . $voice, 1, $out);
-                safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
+                $use_spd = $this->config['USE_SPD'];
+                if ($use_spd) {
+                    safe_exec('spd-say "'.$message.'" -w -y ' . $voice, 1, $out);
+                } else {
+                    safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
+                }
             }
             //...
         }
