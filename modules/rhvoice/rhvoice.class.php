@@ -152,7 +152,7 @@ class rhvoice extends module {
             if ($level >= (int) getGlobal('minMsgLevel')) {
                 $out = '';
                 $voice=$this->config['VOICE'];
-                $voice = 'Anna+CLB';
+                //$voice = 'Anna+CLB';
                 $use_spd = $this->config['USE_SPD'];
                 if ($use_spd) {
                     safe_exec('spd-say "'.$message.'" -w -y ' . $voice, 1, $out);
