@@ -1,0 +1,25 @@
+<form action="?" method="post" enctype="multipart/form-data" name="frmEdit" class="form-horizontal">
+    <fieldset>
+        <div class="form-group">
+            <label class="control-label"> <#LANG_VOICE#> </label>
+            <div class="col-lg-6">
+                <select name="voice" id="voice" class="form-control">
+                    <option value="Aleksandr"[#if VOICE="Aleksandr"#] selected[#endif#]><#LANG_VOICE_ALEKSANDR#></option>
+                    <option value="Elena"[#if VOICE="Elena"#] selected[#endif#]><#LANG_VOICE_ELENA#></option>
+                    <option value="Anna"[#if VOICE="Anna"#] selected[#endif#]><#LANG_VOICE_ANNA#></option>
+                    <option value="Anna+CLB"[#if VOICE="Anna+CLB"#] selected[#endif#]><#LANG_VOICE_ANNA#>+CLB</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="controls">
+                <label><input type="checkbox" name="use_spd" value="1"[#if USE_SPD="1"#] checked[#endif#]><#LANG_USE_SPD#></label>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_UPDATE#></button>
+            <input type="hidden" name="view_mode" value="update_settings">
+            <input type="hidden" name="mode" value="update">
+        </div>
+    </fieldset>
+</form>

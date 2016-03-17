@@ -1,0 +1,36 @@
+<!--  help view -->
+[#if VIEW_MODE="help"#]
+<h4><#LANG_RHVOICE_INSTALLATION#></h4>
+<p>
+    Подробнее про установку можно почитать <a href="https://github.com/Olga-Yakovleva/RHVoice/wiki/Building-on-Linux-(Russian)" target="_blank">тут</a> или на <a href="http://majordomo.smartliving.ru/forum/viewtopic.php?p=31396" target="_blank">форуме</a>.
+</p>
+<div class="panel panel-info">
+    <div class="panel-heading">Debian/Ubuntu</div>
+    <div class="panel-body">
+        Сначала устанавливаем зависимости:<br>
+        <code style="display:block">
+            apt-get install gcc g++ git pkg-config scons libao4 libao-common libao-dev
+        </code>
+        <br>
+        Затем собираем RHVoice:<br>
+        <code style="display:block">
+            cd /usr/src/<br>
+            git clone https://github.com/Olga-Yakovleva/RHVoice<br>
+            cd RHVoice<br>
+            scons<br>
+            scons install<br>
+            ldconfig<br>
+        </code>
+        <br>
+        Проверить можно так:<br>
+        <code style="display:block">
+            echo "test" | RHVoice-test<br>
+        </code>
+        или так:<br>
+        <code style="display:block">
+            echo "Привет" | RHVoice-test -p Anna<br>
+        </code>	
+    </div>
+</div>
+[#endif VIEW_MODE#]
+<!-- / help view -->
