@@ -149,7 +149,7 @@ class rhvoice extends module {
         if ($event == 'SAY') {
             $level = $details['level'];
             $message = $details['message'];
-            if ($level >= (int) getGlobal('minMsgLevel')) {
+            if ($level >= (int) getGlobal('minMsgLevel') && !IsWindowsOS()) {
                 $out = '';
                 $voice=$this->config['VOICE'];
                 $use_spd = $this->config['USE_SPD'];
