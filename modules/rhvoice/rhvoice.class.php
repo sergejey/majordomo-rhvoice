@@ -120,6 +120,7 @@ class rhvoice extends module {
         $this->getConfig();
         $out['VOICE']=$this->config['VOICE'];
         $out['USE_SPD']=$this->config['USE_SPD'];
+        $out['USE_CACHE']=$this->config['USE_CACHE'];
         if (!$out['VOICE']) {
             $out['VOICE'] = 'Anna+CLB';
         }
@@ -128,6 +129,9 @@ class rhvoice extends module {
             $this->config['VOICE']=$voice;
             global $use_spd;
             $this->config['USE_SPD']=$use_spd;
+            global $use_cache;
+            $this->config['USE_CACHE']=$use_cache;
+
             $this->saveConfig();
             $this->redirect("?");
         }
@@ -153,10 +157,20 @@ class rhvoice extends module {
                 $out = '';
                 $voice=$this->config['VOICE'];
                 $use_spd = $this->config['USE_SPD'];
+                $use_cache = $this->config['USE_CACHE'];
                 if ($use_spd) {
                     safe_exec('spd-say "'.$message.'" -w -y ' . $voice, 1, $out);
                 } else {
+                 if ($use_cache) {
+                   $cached_filename=ROOT.'cached/voice/rh_'.md5($message).'.wav';
+                   if (!file_exists($cached_filename)) {
+                    safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o '.$cached_filename . ' && mplayer '.$cached_filename, 1, $out);
+                   } else {
+                    playSound($cached_filename);
+                   }
+                 } else {
                     safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
+                 }
                 }
             }
             //...
