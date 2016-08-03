@@ -16,6 +16,11 @@
                 <label><input type="checkbox" name="use_spd" value="1"[#if USE_SPD="1"#] checked[#endif#]><#LANG_USE_SPD#></label>
             </div>
         </div>
+        <div class="form-group">
+            <div class="controls">
+                <label><input type="checkbox" name="use_cache" value="1"[#if USE_CACHE="1"#] checked[#endif#]><#LANG_USE_CACHE#></label>
+            </div>
+        </div>
         <div class="form-actions">
             <button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_UPDATE#></button>
             <input type="hidden" name="view_mode" value="update_settings">

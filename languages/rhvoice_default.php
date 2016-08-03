@@ -10,6 +10,7 @@ $dictionary = array(
     'HELP' => 'Help',
     'VOICE' => 'Voice:',
     'USE_SPD' => 'Use Speech Dispatcher',
+    'USE_CACHE' => 'Use caching',
     'RHVOICE_INSTALLATION' => 'RHVoice installation',
     'VOICE_ALEKSANDR' => 'Aleksandr',
     'VOICE_ELENA' => 'Elena',
