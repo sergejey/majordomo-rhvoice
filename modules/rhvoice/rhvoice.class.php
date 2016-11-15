@@ -160,7 +160,6 @@ class rhvoice extends module {
                 $use_cache = $this->config['USE_CACHE'];
                 if ($use_spd) {
                     safe_exec('spd-say "'.$message.'" -w -y ' . $voice, 1, $out);
-                    $details['ignoreVoice'] = 1;
                 } else {
                  if ($use_cache) {
                    $cached_filename = ROOT . 'cached/voice/rh_' . md5($message) . '.wav';
@@ -172,8 +171,8 @@ class rhvoice extends module {
                  } else {
                     safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
                  }
-                 $details['ignoreVoice'] = 1;
                 }
+                $details['ignoreVoice'] = 1;
             }
             //...
         }
