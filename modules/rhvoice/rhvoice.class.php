@@ -148,9 +148,9 @@ class rhvoice extends module {
         $this->admin($out);
     }
 
-    function processSubscription($event, $details = '') {
+    function processSubscription($event, &$details) {
         $this->getConfig();
-        if ($event == 'SAY') {
+        if ($event == 'SAY' && !$details['ignoreVoice']) {
             $level = $details['level'];
             $message = $details['message'];
             if ($level >= (int) getGlobal('minMsgLevel') && !IsWindowsOS()) {
@@ -160,9 +160,10 @@ class rhvoice extends module {
                 $use_cache = $this->config['USE_CACHE'];
                 if ($use_spd) {
                     safe_exec('spd-say "'.$message.'" -w -y ' . $voice, 1, $out);
+                    $details['ignoreVoice'] = 1;
                 } else {
                  if ($use_cache) {
-                   $cached_filename=ROOT.'cached/voice/rh_'.md5($message).'.wav';
+                   $cached_filename = ROOT . 'cached/voice/rh_'.md5($message).'.wav';
                    if (!file_exists($cached_filename)) {
                     safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o '.$cached_filename . ' && mplayer '.$cached_filename, 1, $out);
                    } else {
@@ -171,6 +172,7 @@ class rhvoice extends module {
                  } else {
                     safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
                  }
+                 $details['ignoreVoice'] = 1;
                 }
             }
             //...
