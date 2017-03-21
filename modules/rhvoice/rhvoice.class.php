@@ -166,7 +166,7 @@ class rhvoice extends module {
                    if (!file_exists($cached_filename)) {
                     safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o '.$cached_filename . ' && mplayer '.$cached_filename, 1, $out);
                    } else {
-                    playSound($cached_filename);
+                    playSound($cached_filename,1);
                    }
                  } else {
                     safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
