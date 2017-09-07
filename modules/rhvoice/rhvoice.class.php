@@ -189,6 +189,18 @@ class rhvoice extends module {
         subscribeToEvent($this->name, 'SAY');
         parent::install();
     }
+    
+    /**
+     * Uninstall
+     *
+     * Module deinstallation routine
+     *
+     * @access private
+     */    
+    function uninstall() {
+        unsubscribeFromEvent($this->name, 'SAY');
+        parent::uninstall();
+    }
 
 // --------------------------------------------------------------------
 }
