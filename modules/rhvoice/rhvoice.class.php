@@ -162,7 +162,12 @@ class rhvoice extends module {
                     safe_exec('spd-say "'.$message.'" -w -y ' . $voice, 1, $out);
                 } else {
                  if ($use_cache) {
-                   $cached_filename = ROOT . 'cached/voice/rh_' . md5($message) . '.wav';
+                     if (is_dir(ROOT . 'cms/cached')) {
+                         $cached_filename = ROOT . 'cms/cached/voice/rh_' . md5($message) . '.wav';
+                     } else {
+                         $cached_filename = ROOT . 'cached/voice/rh_' . md5($message) . '.wav';
+                     }
+
                    if (!file_exists($cached_filename)) {
                     safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o '.$cached_filename . ' && mplayer '.$cached_filename, 1, $out);
                    } else {
