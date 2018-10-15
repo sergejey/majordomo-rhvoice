@@ -1,7 +1,7 @@
 <?php
 
 /**
- * rhvoice 
+ * rhvoice
  * @package project
  * @author Dark_Veter <veter.dark@gmail.com>
  * @copyright Dark_Veter (c)
@@ -9,7 +9,8 @@
  */
 //
 //
-class rhvoice extends module {
+class rhvoice extends module
+{
 
     /**
      * rhvoice
@@ -18,7 +19,8 @@ class rhvoice extends module {
      *
      * @access private
      */
-    function rhvoice() {
+    function rhvoice()
+    {
         $this->name = "rhvoice";
         $this->title = "RHVoice";
         $this->module_category = "<#LANG_SECTION_APPLICATIONS#>";
@@ -32,7 +34,8 @@ class rhvoice extends module {
      *
      * @access public
      */
-    function saveParams($data = 0) {
+    function saveParams($data = 0)
+    {
         $p = array();
         if (IsSet($this->id)) {
             $p["id"] = $this->id;
@@ -56,7 +59,8 @@ class rhvoice extends module {
      *
      * @access public
      */
-    function getParams() {
+    function getParams()
+    {
         global $id;
         global $mode;
         global $view_mode;
@@ -86,7 +90,8 @@ class rhvoice extends module {
      *
      * @access public
      */
-    function run() {
+    function run()
+    {
         global $session;
         $out = array();
         if ($this->action == 'admin') {
@@ -116,21 +121,22 @@ class rhvoice extends module {
      *
      * @access public
      */
-    function admin(&$out) {
+    function admin(&$out)
+    {
         $this->getConfig();
-        $out['VOICE']=$this->config['VOICE'];
-        $out['USE_SPD']=$this->config['USE_SPD'];
-        $out['USE_CACHE']=$this->config['USE_CACHE'];
+        $out['VOICE'] = $this->config['VOICE'];
+        $out['USE_SPD'] = $this->config['USE_SPD'];
+        $out['USE_CACHE'] = $this->config['USE_CACHE'];
         if (!$out['VOICE']) {
             $out['VOICE'] = 'Anna+CLB';
         }
         if ($this->view_mode == 'update_settings') {
             global $voice;
-            $this->config['VOICE']=$voice;
+            $this->config['VOICE'] = $voice;
             global $use_spd;
-            $this->config['USE_SPD']=$use_spd;
+            $this->config['USE_SPD'] = $use_spd;
             global $use_cache;
-            $this->config['USE_CACHE']=$use_cache;
+            $this->config['USE_CACHE'] = $use_cache;
 
             $this->saveConfig();
             $this->redirect("?");
@@ -144,38 +150,49 @@ class rhvoice extends module {
      *
      * @access public
      */
-    function usual(&$out) {
+    function usual(&$out)
+    {
         $this->admin($out);
     }
 
-    function processSubscription($event, &$details) {
+    function processSubscription($event, &$details)
+    {
         $this->getConfig();
         if ($event == 'SAY' && !$details['ignoreVoice']) {
             $level = $details['level'];
             $message = $details['message'];
-            if ($level >= (int) getGlobal('minMsgLevel') && !IsWindowsOS()) {
+            if ($level >= (int)getGlobal('minMsgLevel') && !IsWindowsOS()) {
                 $out = '';
-                $voice=$this->config['VOICE'];
+                $voice = $this->config['VOICE'];
                 $use_spd = $this->config['USE_SPD'];
                 $use_cache = $this->config['USE_CACHE'];
                 if ($use_spd) {
-                    safe_exec('spd-say "'.$message.'" -w -y ' . $voice, 1, $out);
+                    safe_exec('spd-say "' . $message . '" -w -y ' . $voice, 1, $out);
                 } else {
-                 if ($use_cache) {
-                     if (is_dir(ROOT . 'cms/cached')) {
-                         $cached_filename = ROOT . 'cms/cached/voice/rh_' . md5($message) . '.wav';
-                     } else {
-                         $cached_filename = ROOT . 'cached/voice/rh_' . md5($message) . '.wav';
-                     }
+                    if ($use_cache) {
+                        if (is_dir(ROOT . 'cms/cached')) {
+                            $cached_filename = ROOT . 'cms/cached/voice/rh_' . md5($message) . '.wav';
+                        } else {
+                            $cached_filename = ROOT . 'cached/voice/rh_' . md5($message) . '.wav';
+                        }
 
-                   if (!file_exists($cached_filename)) {
-                    safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o '.$cached_filename . ' && mplayer '.$cached_filename, 1, $out);
-                   } else {
-                    playSound($cached_filename,1);
-                   }
-                 } else {
-                    safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
-                 }
+                        if (!file_exists($cached_filename)) {
+                            safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o ' . $cached_filename . ' && mplayer ' . $cached_filename, 1, $out);
+                        } else {
+                            playSound($cached_filename, 1);
+                        }
+
+                        if (file_exists($cached_filename)) {
+                            processSubscriptions('SAY_CACHED_READY', array(
+                                'level' => $level,
+                                'tts_engine' => 'rhvoice',
+                                'message' => $message,
+                                'filename' => $cached_filename,
+                            ));
+                        }
+                    } else {
+                        safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
+                    }
                 }
                 $details['ignoreVoice'] = 1;
             }
@@ -190,19 +207,21 @@ class rhvoice extends module {
      *
      * @access private
      */
-    function install($data = '') {
+    function install($data = '')
+    {
         subscribeToEvent($this->name, 'SAY');
         parent::install();
     }
-    
+
     /**
      * Uninstall
      *
      * Module deinstallation routine
      *
      * @access private
-     */    
-    function uninstall() {
+     */
+    function uninstall()
+    {
         unsubscribeFromEvent($this->name, 'SAY');
         parent::uninstall();
     }
