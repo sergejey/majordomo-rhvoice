@@ -158,24 +158,26 @@ class rhvoice extends module
     function processSubscription($event, &$details)
     {
         $this->getConfig();
+        $level = (int)$details['level'];
+        $message = $details['message'];
+        $voice = $this->config['VOICE'];
+        $destination = $details['destination'];
+
+        if (is_dir(ROOT . 'cms/cached')) {
+            $cached_filename = ROOT . 'cms/cached/voice/rh_' . md5($message) . '.wav';
+        } else {
+            $cached_filename = ROOT . 'cached/voice/rh_' . md5($message) . '.wav';
+        }
+
         if ($event == 'SAY' && !$details['ignoreVoice']) {
-            $level = $details['level'];
-            $message = $details['message'];
             if ($level >= (int)getGlobal('minMsgLevel') && !IsWindowsOS()) {
                 $out = '';
-                $voice = $this->config['VOICE'];
                 $use_spd = $this->config['USE_SPD'];
                 $use_cache = $this->config['USE_CACHE'];
                 if ($use_spd) {
                     safe_exec('spd-say "' . $message . '" -w -y ' . $voice, 1, $out);
                 } else {
                     if ($use_cache) {
-                        if (is_dir(ROOT . 'cms/cached')) {
-                            $cached_filename = ROOT . 'cms/cached/voice/rh_' . md5($message) . '.wav';
-                        } else {
-                            $cached_filename = ROOT . 'cached/voice/rh_' . md5($message) . '.wav';
-                        }
-
                         if (!file_exists($cached_filename)) {
                             safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o ' . $cached_filename . ' && mplayer ' . $cached_filename, 1, $out);
                         } else {
@@ -188,6 +190,8 @@ class rhvoice extends module
                                 'tts_engine' => 'rhvoice',
                                 'message' => $message,
                                 'filename' => $cached_filename,
+                                'destination' => $destination,
+                                'event' => $event,
                             ));
                         }
                     } else {
@@ -197,6 +201,20 @@ class rhvoice extends module
                 $details['ignoreVoice'] = 1;
             }
             //...
+        } elseif ($event == 'SAYTO' || $event=='ASK') {
+            if (!file_exists($cached_filename)) {
+                safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o ' . $cached_filename, 1, $out);
+            }
+            if (file_exists($cached_filename)) {
+                processSubscriptions('SAY_CACHED_READY', array(
+                    'level' => $level,
+                    'tts_engine' => 'rhvoice',
+                    'message' => $message,
+                    'filename' => $cached_filename,
+                    'destination' => $destination,
+                    'event' => $event,
+                ));
+            }
         }
     }
 
@@ -210,6 +228,8 @@ class rhvoice extends module
     function install($data = '')
     {
         subscribeToEvent($this->name, 'SAY');
+        subscribeToEvent($this->name, 'SAYTO');
+        subscribeToEvent($this->name, 'ASK');
         parent::install();
     }
 
@@ -223,6 +243,8 @@ class rhvoice extends module
     function uninstall()
     {
         unsubscribeFromEvent($this->name, 'SAY');
+        unsubscribeFromEvent($this->name, 'SAYTO');
+        unsubscribeFromEvent($this->name, 'ASK');
         parent::uninstall();
     }
 
