@@ -185,7 +185,7 @@ class rhvoice extends module
                         }
 
                         if (file_exists($cached_filename)) {
-                            processSubscriptions('SAY_CACHED_READY', array(
+                            processSubscriptionsSafe('SAY_CACHED_READY', array(
                                 'level' => $level,
                                 'tts_engine' => 'rhvoice',
                                 'message' => $message,
@@ -206,7 +206,7 @@ class rhvoice extends module
                 safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o ' . $cached_filename, 1, $out);
             }
             if (file_exists($cached_filename)) {
-                processSubscriptions('SAY_CACHED_READY', array(
+                processSubscriptionsSafe('SAY_CACHED_READY', array(
                     'level' => $level,
                     'tts_engine' => 'rhvoice',
                     'message' => $message,
