@@ -179,13 +179,18 @@ class rhvoice extends module
                 } else {
                     if ($use_cache) {
                         if (!file_exists($cached_filename)) {
-                            safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o ' . $cached_filename . ' && mplayer ' . $cached_filename, 1, $out);
+                            if (defined('AUDIO_PLAYER') && AUDIO_PLAYER!='') {
+                                $audio_player = AUDIO_PLAYER;
+                            } else {
+                                $audio_player = 'mplayer';
+                            }
+                            safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o ' . $cached_filename . ' && '.$audio_player.' ' . $cached_filename, 1, $out);
                         } else {
                             playSound($cached_filename, 1);
                         }
 
                         if (file_exists($cached_filename)) {
-                            processSubscriptionsSafe('SAY_CACHED_READY', array(
+                            processSubscriptions('SAY_CACHED_READY', array(
                                 'level' => $level,
                                 'tts_engine' => 'rhvoice',
                                 'message' => $message,
@@ -206,7 +211,7 @@ class rhvoice extends module
                 safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o ' . $cached_filename, 1, $out);
             }
             if (file_exists($cached_filename)) {
-                processSubscriptionsSafe('SAY_CACHED_READY', array(
+                processSubscriptions('SAY_CACHED_READY', array(
                     'level' => $level,
                     'tts_engine' => 'rhvoice',
                     'message' => $message,
