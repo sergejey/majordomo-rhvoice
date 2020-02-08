@@ -12,9 +12,12 @@ $dictionary = array(
     'USE_SPD' => 'Use Speech Dispatcher',
     'USE_CACHE' => 'Use caching',
     'RHVOICE_INSTALLATION' => 'RHVoice installation',
-    'VOICE_ALEKSANDR' => 'Aleksandr',
-    'VOICE_ELENA' => 'Elena',
-    'VOICE_ANNA' => 'Anna'
+    'VOICE_ALEKSANDR' => 'Aleksandr Russian',
+    'VOICE_ELENA' => 'Elena Russian',
+    'VOICE_ANNA' => 'Anna Russian',
+    'VOICE_CLB' => 'English women',
+    'VOICE_SLT' => 'English men',
+
 );
 
 foreach ($dictionary as $k => $v) {
