@@ -14,7 +14,9 @@ $dictionary = array(
     'RHVOICE_INSTALLATION' => 'Instalación de RHVoice',
     'VOICE_ALEKSANDR' => 'Aleksandr',
     'VOICE_ELENA' => 'Elena',
-    'VOICE_ANNA' => 'Anna'
+    'VOICE_ANNA' => 'Anna',
+    'VOICE_CLB' => 'Inglés femenino',
+    'VOICE_SLT' => 'Inglés para hombres'
 );
 
 foreach ($dictionary as $k => $v) {
