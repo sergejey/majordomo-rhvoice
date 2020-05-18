@@ -172,7 +172,8 @@ class rhvoice extends module
                 $details['tts_engine']      = 'rhvoice_tts';
                 if (!file_exists($cached_filename)) {
                     $cmd = 'echo "' . $details['MESSAGE'] . '" | RHVoice-test -o "' . $cached_filename . '" -p ' . $voice;
-                    safe_exec($cmd, 1, $level, processSubscriptionsSafe('SAY_CACHED_READY', $details));
+                    safe_exec($cmd, 1, $level);
+                    processSubscriptionsSafe('SAY_CACHED_READY', $details)
                 } else {
                     processSubscriptions('SAY_CACHED_READY', $details);
                 }
