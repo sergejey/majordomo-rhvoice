@@ -173,7 +173,7 @@ class rhvoice extends module
                 if (!file_exists($cached_filename)) {
                     $cmd = 'echo "' . $details['MESSAGE'] . '" | RHVoice-test -o "' . $cached_filename . '" -p ' . $voice;
                     safe_exec($cmd, 1, $level);
-                    processSubscriptionsSafe('SAY_CACHED_READY', $details)
+                    processSubscriptionsSafe('SAY_CACHED_READY', $details);
                 } else {
                     processSubscriptions('SAY_CACHED_READY', $details);
                 }
