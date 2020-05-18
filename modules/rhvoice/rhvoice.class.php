@@ -127,6 +127,9 @@ class rhvoice extends module
         $out['VOICE'] = $this->config['VOICE'];
         $out['USE_SPD'] = $this->config['USE_SPD'];
         $out['USE_CACHE'] = $this->config['USE_CACHE'];
+        $out['USE_REST_API'] = $this->config['USE_REST_API'];
+        $out['IP_FOR_USERESTAPI'] = $this->config['IP_FOR_USERESTAPI'];
+        
         if (!$out['VOICE']) {
             $out['VOICE'] = 'Anna+CLB';
         }
@@ -137,6 +140,11 @@ class rhvoice extends module
             $this->config['USE_SPD'] = $use_spd;
             global $use_cache;
             $this->config['USE_CACHE'] = $use_cache;
+            global $use_rest_api;
+            $this->config['USE_REST_API'] = $use_rest_api;
+            global $ip_for_userestapi;
+            $this->config['IP_FOR_USERESTAPI'] = $ip_for_userestapi;
+            
 
             $this->saveConfig();
             $this->redirect("?");
@@ -160,7 +168,7 @@ class rhvoice extends module
         $this->getConfig();
         // add for Terminals2
         if ($details['SOURCE']) {
-            if (($event == 'SAY' OR $event == 'SAYTO' OR $event == 'SAYREPLY') AND !$this->config['DISABLED']) {
+            if (($event == 'SAY' OR $event == 'SAYTO' OR $event == 'SAYREPLY') AND !$this->config['USE_REST_API']) {
                 $voice = $this->config['VOICE'];
                 DebMes("Processing $event: " . json_encode($details, JSON_UNESCAPED_UNICODE), 'terminals');
                 $out                        = '';
@@ -178,9 +186,38 @@ class rhvoice extends module
                     processSubscriptions('SAY_CACHED_READY', $details);
                 }
                 $details['BREAK'] = true;
-            }
             return true;
+	    }
+        if ($this->config['USE_REST_API'] AND ($event == 'SAY' OR $event == 'SAYTO' OR $event == 'SAYREPLY')) {
+            DebMes("Processing $event: " . json_encode($details, JSON_UNESCAPED_UNICODE), 'terminals');
+            $voice = $this->config['VOICE'];
+            $message                    = $details['MESSAGE'];
+            $mmd5                       = md5($message);
+            $cached_filename            = ROOT . 'cms/cached/voice/rh_' . $mmd5 . '.mp3';
+            $details['CACHED_FILENAME'] = $cached_filename;
+            $details['tts_engine']      = 'rhvoice_tts';
+            $cachedVoiceDir = ROOT . 'cms/cached/voice';
+            
+            $base_url = 'http://' . $this->config['IP_FOR_USERESTAPI'] . '/say?text='.urlencode($message);
+            if (!file_exists($cached_filename)) {
+                try {
+                    $contents = file_get_contents($base_url);
+                } catch (Exception $e) {
+                    registerError('RH_VOICE_REST_API', get_class($e) . ', ' . $e->getMessage());
+                }
+                if (isset($contents)) {
+                    CreateDir($cachedVoiceDir);
+                    SaveFile($cached_filename, $contents);
+                    processSubscriptions('SAY_CACHED_READY', $details);
+                }
+            } else {
+                processSubscriptions('SAY_CACHED_READY', $details);
+            }
+            $details['BREAK'] = true;
+	    return true;
         }
+        return false;
+    }
         
         
         $level = (int)$details['level'];
