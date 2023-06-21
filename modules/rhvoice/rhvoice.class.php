@@ -124,11 +124,11 @@ class rhvoice extends module
     function admin(&$out)
     {
         $this->getConfig();
-        $out['VOICE'] = $this->config['VOICE'];
-        $out['USE_SPD'] = $this->config['USE_SPD'];
-        $out['USE_CACHE'] = $this->config['USE_CACHE'];
-        $out['USE_REST_API'] = $this->config['USE_REST_API'];
-        $out['IP_FOR_USERESTAPI'] = $this->config['IP_FOR_USERESTAPI'];
+        $out['VOICE'] = isset($this->config['VOICE'])?$this->config['VOICE']:'';
+        $out['USE_SPD'] = isset($this->config['USE_SPD'])?$this->config['USE_SPD']:'';
+        $out['USE_CACHE'] = isset($this->config['USE_CACHE'])?$this->config['USE_CACHE']:'';
+        $out['USE_REST_API'] = isset($this->config['USE_REST_API'])?$this->config['USE_REST_API']:'';
+        $out['IP_FOR_USERESTAPI'] = isset($this->config['IP_FOR_USERESTAPI'])?$this->config['IP_FOR_USERESTAPI']:'';
         
         if (!$out['VOICE']) {
             $out['VOICE'] = 'Anna+CLB';
