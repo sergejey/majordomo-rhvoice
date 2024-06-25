@@ -167,7 +167,7 @@ class rhvoice extends module
     {
         $this->getConfig();
         // add for Terminals2
-        if ($details['SOURCE']) {
+        if (isset($details['SOURCE'])) {
             $use_rest_api = isset($this->config['USE_REST_API']) ? $this->config['USE_REST_API'] : 0;
             if (($event == 'SAY' || $event == 'SAYTO' || $event == 'SAYREPLY') && !$use_rest_api) {
                 $voice = $this->config['VOICE'];
@@ -225,7 +225,7 @@ class rhvoice extends module
         $level = (int)$details['level'];
         $message = $details['message'];
         $voice = isset($this->config['VOICE']) ? $this->config['VOICE'] : '';
-        $destination = $details['destination'];
+        $destination = isset($details['destination']) ? $details['destination'] : '';
 
         if (is_dir(ROOT . 'cms/cached')) {
             $cached_filename = ROOT . 'cms/cached/voice/rh_' . md5($message) . '.wav';
@@ -233,7 +233,7 @@ class rhvoice extends module
             $cached_filename = ROOT . 'cached/voice/rh_' . md5($message) . '.wav';
         }
 
-        if ($event == 'SAY' && !$details['ignoreVoice']) {
+        if ($event == 'SAY' && !isset($details['ignoreVoice'])) {
             if ($level >= (int)getGlobal('minMsgLevel') && !IsWindowsOS()) {
                 $out = '';
                 $use_spd = isset($this->config['USE_SPD']) ? $this->config['USE_SPD'] : false;
