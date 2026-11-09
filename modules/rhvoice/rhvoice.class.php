@@ -129,6 +129,7 @@ class rhvoice extends module
         $out['USE_CACHE'] = isset($this->config['USE_CACHE']) ? $this->config['USE_CACHE'] : '';
         $out['USE_REST_API'] = isset($this->config['USE_REST_API']) ? $this->config['USE_REST_API'] : '';
         $out['IP_FOR_USERESTAPI'] = isset($this->config['IP_FOR_USERESTAPI']) ? $this->config['IP_FOR_USERESTAPI'] : '';
+        $out['RATE'] = isset($this->config['RATE']) ? (int)$this->config['RATE'] : '';
 
         if (!$out['VOICE']) {
             $out['VOICE'] = 'Anna+CLB';
@@ -144,6 +145,9 @@ class rhvoice extends module
             $this->config['USE_REST_API'] = $use_rest_api;
             global $ip_for_userestapi;
             $this->config['IP_FOR_USERESTAPI'] = $ip_for_userestapi;
+            global $rate;
+            $rate = (int)$rate;
+            $this->config['RATE'] = ($rate > 0 && $rate <= 300) ? $rate : '';
 
 
             $this->saveConfig();
@@ -163,6 +167,13 @@ class rhvoice extends module
         $this->admin($out);
     }
 
+    // RHVoice-test option for the speech rate setting (percent, 100 = normal); empty = RHVoice default
+    function rateOption()
+    {
+        $rate = isset($this->config['RATE']) ? (int)$this->config['RATE'] : 0;
+        return ($rate > 0 && $rate != 100) ? ' -r ' . $rate : '';
+    }
+
     function processSubscription($event, &$details)
     {
         $this->getConfig();
@@ -180,7 +191,7 @@ class rhvoice extends module
                 $details['CACHED_FILENAME'] = $cached_filename;
                 $details['tts_engine'] = 'rhvoice_tts';
                 if (!file_exists($cached_filename)) {
-                    $cmd = 'echo "' . $details['MESSAGE'] . '" | RHVoice-test -o "' . $cached_filename . '" -p ' . $voice;
+                    $cmd = 'echo "' . $details['MESSAGE'] . '" | RHVoice-test' . $this->rateOption() . ' -o "' . $cached_filename . '" -p ' . $voice;
                     safe_exec($cmd, 1, $level);
                     processSubscriptionsSafe('SAY_CACHED_READY', $details);
                 } else {
@@ -248,7 +259,7 @@ class rhvoice extends module
                             } else {
                                 $audio_player = 'mplayer';
                             }
-                            safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o ' . $cached_filename . ' && ' . $audio_player . ' ' . $cached_filename, 1, $out);
+                            safe_exec('echo "' . $message . '" | RHVoice-test' . $this->rateOption() . ' -p ' . $voice . ' -o ' . $cached_filename . ' && ' . $audio_player . ' ' . $cached_filename, 1, $out);
                         } else {
                             playSound($cached_filename, 1);
                         }
@@ -264,7 +275,7 @@ class rhvoice extends module
                             ));
                         }
                     } else {
-                        safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice, 1, $out);
+                        safe_exec('echo "' . $message . '" | RHVoice-test' . $this->rateOption() . ' -p ' . $voice, 1, $out);
                     }
                 }
                 $details['ignoreVoice'] = 1;
@@ -272,7 +283,7 @@ class rhvoice extends module
             //...
         } elseif ($event == 'SAYTO' || $event == 'ASK') {
             if (!file_exists($cached_filename)) {
-                safe_exec('echo "' . $message . '" | RHVoice-test -p ' . $voice . ' -o ' . $cached_filename, 1, $out);
+                safe_exec('echo "' . $message . '" | RHVoice-test' . $this->rateOption() . ' -p ' . $voice . ' -o ' . $cached_filename, 1, $out);
             }
             if (file_exists($cached_filename)) {
                 processSubscriptions('SAY_CACHED_READY', array(

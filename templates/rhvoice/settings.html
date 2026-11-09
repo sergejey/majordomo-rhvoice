@@ -5,12 +5,23 @@
             <div class="col-lg-6">
                 <select name="voice" id="voice" class="form-control">
                     <option value="Aleksandr"[#if VOICE="Aleksandr"#] selected[#endif#]><#LANG_VOICE_ALEKSANDR#></option>
+                    <option value="Aleksandr+alan"[#if VOICE="Aleksandr+alan"#] selected[#endif#]><#LANG_VOICE_ALEKSANDR#>+alan</option>
                     <option value="Elena"[#if VOICE="Elena"#] selected[#endif#]><#LANG_VOICE_ELENA#></option>
                     <option value="Anna"[#if VOICE="Anna"#] selected[#endif#]><#LANG_VOICE_ANNA#></option>
                     <option value="Anna+CLB"[#if VOICE="Anna+CLB"#] selected[#endif#]><#LANG_VOICE_ANNA#>+CLB</option>
                     <option value="CLB"[#if VOICE="CLB"#] selected[#endif#]><#LANG_VOICE_CLB#></option>
                     <option value="SLT"[#if VOICE="SLT"#] selected[#endif#]><#LANG_VOICE_SLT#></option>
+                    <option value="Natalia+alan,anna+slt"[#if VOICE="Natalia+alan,anna+slt"#] selected[#endif#]><#LANG_VOICE_NATALIA#></option>
+                    <option value="Anatol+alan,slt+anna"[#if VOICE="Anatol+alan,slt+anna"#] selected[#endif#]><#LANG_VOICE_ANATOL#></option>
+                    <option value="Marianna+alan,anna+slt"[#if VOICE="Marianna+alan,anna+slt"#] selected[#endif#]><#LANG_VOICE_MARIANNA#></option>
+                    <option value="Volodymyr+alan,slt+anna"[#if VOICE="Volodymyr+alan,slt+anna"#] selected[#endif#]><#LANG_VOICE_VOLODYMYR#></option>
                 </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label"> <#LANG_RHVOICE_RATE#> </label>
+            <div class="col-lg-6">
+                <input type="number" name="rate" min="10" max="300" step="5" value="[#RATE#]" placeholder="100" class="form-control">
             </div>
         </div>
         <div class="form-group">
