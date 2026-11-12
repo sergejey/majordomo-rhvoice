@@ -17,6 +17,11 @@ $dictionary = array(
     'VOICE_ANNA' => 'Anna Russian',
     'VOICE_CLB' => 'English women',
     'VOICE_SLT' => 'English men',
+    'VOICE_NATALIA' => 'Natalia Ukrainian',
+    'VOICE_ANATOL' => 'Anatol Ukrainian',
+    'VOICE_MARIANNA' => 'Marianna Ukrainian',
+    'VOICE_VOLODYMYR' => 'Volodymyr Ukrainian',
+    'RHVOICE_RATE' => 'Speech rate, % (100 = normal):',
 
 );
 

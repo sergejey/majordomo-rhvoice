@@ -16,7 +16,12 @@ $dictionary = array(
     'VOICE_ELENA' => 'Елена',
     'VOICE_ANNA' => 'Анна',
     'VOICE_CLB' => 'Женский английский',
-    'VOICE_SLT' => 'Мужской английский'
+    'VOICE_SLT' => 'Мужской английский',
+    'VOICE_NATALIA' => 'Наталия (украинский)',
+    'VOICE_ANATOL' => 'Анатоль (украинский)',
+    'VOICE_MARIANNA' => 'Марьяна (украинский)',
+    'VOICE_VOLODYMYR' => 'Владимир (украинский)',
+    'RHVOICE_RATE' => 'Скорость речи, % (100 = обычная):'
 );
 
 foreach ($dictionary as $k => $v) {
