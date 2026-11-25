@@ -130,6 +130,11 @@ class rhvoice extends module
         $out['USE_REST_API'] = isset($this->config['USE_REST_API']) ? $this->config['USE_REST_API'] : '';
         $out['IP_FOR_USERESTAPI'] = isset($this->config['IP_FOR_USERESTAPI']) ? $this->config['IP_FOR_USERESTAPI'] : '';
         $out['RATE'] = isset($this->config['RATE']) ? (int)$this->config['RATE'] : '';
+        $out['PITCH'] = isset($this->config['PITCH']) ? (int)$this->config['PITCH'] : '';
+        $out['VOLUME'] = isset($this->config['VOLUME']) ? (int)$this->config['VOLUME'] : '';
+        $out['QUALITY'] = isset($this->config['QUALITY']) ? $this->config['QUALITY'] : '';
+        $out['SAMPLE_RATE'] = isset($this->config['SAMPLE_RATE']) ? (int)$this->config['SAMPLE_RATE'] : '';
+        $out['REST_FORMAT'] = isset($this->config['REST_FORMAT']) ? $this->config['REST_FORMAT'] : 'mp3';
 
         if (!$out['VOICE']) {
             $out['VOICE'] = 'Anna+CLB';
@@ -148,6 +153,19 @@ class rhvoice extends module
             global $rate;
             $rate = (int)$rate;
             $this->config['RATE'] = ($rate > 0 && $rate <= 300) ? $rate : '';
+            global $pitch;
+            $pitch = (int)$pitch;
+            $this->config['PITCH'] = ($pitch > 0 && $pitch <= 300) ? $pitch : '';
+            global $volume;
+            $volume = (int)$volume;
+            $this->config['VOLUME'] = ($volume > 0 && $volume <= 300) ? $volume : '';
+            global $quality;
+            $this->config['QUALITY'] = in_array($quality, array('max', 'standard', 'min'), true) ? $quality : '';
+            global $sample_rate;
+            $sample_rate = (int)$sample_rate;
+            $this->config['SAMPLE_RATE'] = in_array($sample_rate, array(16000, 24000, 48000), true) ? $sample_rate : '';
+            global $rest_format;
+            $this->config['REST_FORMAT'] = in_array($rest_format, array('wav', 'mp3', 'opus', 'flac'), true) ? $rest_format : 'mp3';
 
 
             $this->saveConfig();
@@ -174,6 +192,42 @@ class rhvoice extends module
         return ($rate > 0 && $rate != 100) ? ' -r ' . $rate : '';
     }
 
+    function speechOptions()
+    {
+        $options = $this->speechOptions();
+        foreach (array('PITCH' => '-t', 'VOLUME' => '-v') as $key => $flag) {
+            $value = isset($this->config[$key]) ? (int)$this->config[$key] : 0;
+            if ($value > 0 && $value <= 300 && $value != 100) {
+                $options .= ' ' . $flag . ' ' . $value;
+            }
+        }
+        $quality = isset($this->config['QUALITY']) ? $this->config['QUALITY'] : '';
+        if (in_array($quality, array('max', 'standard', 'min'), true)) {
+            $options .= ' -q ' . $quality;
+        }
+        $sampleRate = isset($this->config['SAMPLE_RATE']) ? (int)$this->config['SAMPLE_RATE'] : 0;
+        if (in_array($sampleRate, array(16000, 24000, 48000), true)) {
+            $options .= ' -R ' . $sampleRate;
+        }
+        return $options;
+    }
+
+    function restOptions($voice)
+    {
+        $format = isset($this->config['REST_FORMAT']) ? $this->config['REST_FORMAT'] : 'mp3';
+        if (!in_array($format, array('wav', 'mp3', 'opus', 'flac'), true)) {
+            $format = 'mp3';
+        }
+        $parts = array('voice=' . urlencode($voice), 'format=' . $format);
+        foreach (array('RATE', 'PITCH', 'VOLUME') as $key) {
+            $value = isset($this->config[$key]) ? (int)$this->config[$key] : 100;
+            if ($value <= 0 || $value > 300) {
+                $value = 100;
+            }
+            $parts[] = strtolower($key) . '=' . (int)round($value / 2);
+        }
+        return '&' . implode('&', $parts);
+    }
     function processSubscription($event, &$details)
     {
         $this->getConfig();
@@ -186,12 +240,12 @@ class rhvoice extends module
                 $out = '';
                 $message = $details['MESSAGE'];
                 $level = $details['IMPORTANCE'];
-                $mmd5 = md5($message);
+                $mmd5 = md5($message . $this->speechOptions() . $voice);
                 $cached_filename = ROOT . 'cms/cached/voice/rh_' . $mmd5 . '.wav';
                 $details['CACHED_FILENAME'] = $cached_filename;
                 $details['tts_engine'] = 'rhvoice_tts';
                 if (!file_exists($cached_filename)) {
-                    $cmd = 'echo "' . $details['MESSAGE'] . '" | RHVoice-test' . $this->rateOption() . ' -o "' . $cached_filename . '" -p ' . $voice;
+                    $cmd = 'echo "' . $details['MESSAGE'] . '" | RHVoice-test' . $this->speechOptions() . ' -o "' . $cached_filename . '" -p ' . $voice;
                     safe_exec($cmd, 1, $level);
                     processSubscriptionsSafe('SAY_CACHED_READY', $details);
                 } else {
@@ -203,16 +257,16 @@ class rhvoice extends module
             $ip_for_userestapi = isset($this->config['IP_FOR_USERESTAPI']) ? $this->config['IP_FOR_USERESTAPI'] : '';
             if ($use_rest_api && ($event == 'SAY' || $event == 'SAYTO' || $event == 'SAYREPLY')) {
                 DebMes("Processing $event: " . json_encode($details, JSON_UNESCAPED_UNICODE), 'terminals');
-                //$voice = $this->config['VOICE'];
+                $voice = isset($this->config['VOICE']) ? $this->config['VOICE'] : 'Anna+CLB';
                 $message = $details['MESSAGE'];
-                $mmd5 = md5($message);
+                $mmd5 = md5($message . $this->restOptions(isset($this->config['VOICE']) ? $this->config['VOICE'] : 'Anna+CLB'));
                 $cached_filename = ROOT . 'cms/cached/voice/rh_' . $mmd5 . '.mp3';
                 $details['CACHED_FILENAME'] = $cached_filename;
                 $details['tts_engine'] = 'rhvoice_tts';
                 $cachedVoiceDir = ROOT . 'cms/cached/voice';
 
                 if (!file_exists($cached_filename) && $ip_for_userestapi) {
-                    $base_url = 'http://' . $ip_for_userestapi . '/say?text=' . urlencode($message);
+                    $base_url = 'http://' . $ip_for_userestapi . '/say?text=' . urlencode($message) . $this->restOptions($voice);
                     try {
                         $contents = file_get_contents($base_url);
                     } catch (Exception $e) {
@@ -239,9 +293,9 @@ class rhvoice extends module
         $destination = isset($details['destination']) ? $details['destination'] : '';
 
         if (is_dir(ROOT . 'cms/cached')) {
-            $cached_filename = ROOT . 'cms/cached/voice/rh_' . md5($message) . '.wav';
+            $cached_filename = ROOT . 'cms/cached/voice/rh_' . md5($message . $this->speechOptions() . (isset($this->config['VOICE']) ? $this->config['VOICE'] : '')) . '.wav';
         } else {
-            $cached_filename = ROOT . 'cached/voice/rh_' . md5($message) . '.wav';
+            $cached_filename = ROOT . 'cached/voice/rh_' . md5($message . $this->speechOptions() . (isset($this->config['VOICE']) ? $this->config['VOICE'] : '')) . '.wav';
         }
 
         if ($event == 'SAY' && !isset($details['ignoreVoice'])) {
@@ -259,7 +313,7 @@ class rhvoice extends module
                             } else {
                                 $audio_player = 'mplayer';
                             }
-                            safe_exec('echo "' . $message . '" | RHVoice-test' . $this->rateOption() . ' -p ' . $voice . ' -o ' . $cached_filename . ' && ' . $audio_player . ' ' . $cached_filename, 1, $out);
+                            safe_exec('echo "' . $message . '" | RHVoice-test' . $this->speechOptions() . ' -p ' . $voice . ' -o ' . $cached_filename . ' && ' . $audio_player . ' ' . $cached_filename, 1, $out);
                         } else {
                             playSound($cached_filename, 1);
                         }
@@ -275,7 +329,7 @@ class rhvoice extends module
                             ));
                         }
                     } else {
-                        safe_exec('echo "' . $message . '" | RHVoice-test' . $this->rateOption() . ' -p ' . $voice, 1, $out);
+                        safe_exec('echo "' . $message . '" | RHVoice-test' . $this->speechOptions() . ' -p ' . $voice, 1, $out);
                     }
                 }
                 $details['ignoreVoice'] = 1;
@@ -283,7 +337,7 @@ class rhvoice extends module
             //...
         } elseif ($event == 'SAYTO' || $event == 'ASK') {
             if (!file_exists($cached_filename)) {
-                safe_exec('echo "' . $message . '" | RHVoice-test' . $this->rateOption() . ' -p ' . $voice . ' -o ' . $cached_filename, 1, $out);
+                safe_exec('echo "' . $message . '" | RHVoice-test' . $this->speechOptions() . ' -p ' . $voice . ' -o ' . $cached_filename, 1, $out);
             }
             if (file_exists($cached_filename)) {
                 processSubscriptions('SAY_CACHED_READY', array(
