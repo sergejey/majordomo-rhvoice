@@ -2,17 +2,17 @@
 [#if VIEW_MODE="help"#]
 <h4><#LANG_RHVOICE_INSTALLATION#></h4>
 <p>
-    Подробнее про установку можно почитать <a href="https://github.com/Olga-Yakovleva/RHVoice/wiki/Building-on-Linux-(Russian)" target="_blank">тут</a> или <a href="http://majordomo.smartliving.ru/forum/viewtopic.php?p=31396" target="_blank">на форуме</a>.
+    <#LANG_HELP_MORE#> <a href="https://github.com/Olga-Yakovleva/RHVoice/wiki/Building-on-Linux-(Russian)" target="_blank"><#LANG_HERE#></a> <#LANG_HELP_OR#> <a href="http://majordomo.smartliving.ru/forum/viewtopic.php?p=31396" target="_blank"><#LANG_ON_FORUM#></a>.
 </p>
 <div class="panel panel-info">
     <div class="panel-heading">Debian/Ubuntu</div>
     <div class="panel-body">
-        Сначала устанавливаем зависимости:<br>
+        <#LANG_HELP_INSTALL_DEPS#><br>
         <code style="display:block">
             apt-get install gcc g++ git pkg-config scons libao4 libao-common libao-dev
         </code>
         <br>
-        Затем собираем RHVoice:<br>
+        <#LANG_HELP_BUILD#><br>
         <code style="display:block">
             cd /usr/src/<br>
             git clone https://github.com/Olga-Yakovleva/RHVoice<br>
@@ -22,13 +22,13 @@
             ldconfig<br>
         </code>
         <br>
-        Проверить можно так:<br>
+        <#LANG_HELP_CHECK#><br>
         <code style="display:block">
             echo "test" | RHVoice-test<br>
         </code>
-        или так:<br>
+        <#LANG_HELP_OR#><br>
         <code style="display:block">
-            echo "Привет" | RHVoice-test -p Anna<br>
+            echo "<#LANG_HELP_PHRASE#>" | RHVoice-test -p Anna<br>
         </code>	
     </div>
 </div>
