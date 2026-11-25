@@ -32,7 +32,15 @@ $dictionary = array(
     'HELP_BUILD' => 'Después compile RHVoice:',
     'HELP_CHECK' => 'Puede comprobarlo así:',
     'HELP_OR' => 'o así:',
-    'HELP_PHRASE' => 'Hola'
+    'HELP_PHRASE' => 'Hola',
+    'PITCH' => 'Tono de voz, % (100 = normal):',
+    'VOLUME' => 'Volumen, % (100 = normal):',
+    'QUALITY' => 'Calidad de voz:',
+    'QUALITY_MAX' => 'Máxima',
+    'QUALITY_STANDARD' => 'Estándar',
+    'QUALITY_MIN' => 'Mínima',
+    'SAMPLE_RATE' => 'Frecuencia de muestreo, Hz:',
+    'REST_FORMAT' => 'Formato de audio de REST API:'
 );
 foreach ($dictionary as $k => $v) {
     if (!defined('LANG_' . $k)) {

@@ -29,7 +29,15 @@ $dictionary = array(
     'HELP_BUILD' => 'Затем собираем RHVoice:',
     'HELP_CHECK' => 'Проверить можно так:',
     'HELP_OR' => 'или так:',
-    'HELP_PHRASE' => 'Привет'
+    'HELP_PHRASE' => 'Привет',
+    'PITCH' => 'Высота голоса, % (100 = обычная):',
+    'VOLUME' => 'Громкость, % (100 = обычная):',
+    'QUALITY' => 'Качество речи:',
+    'QUALITY_MAX' => 'Максимальное',
+    'QUALITY_STANDARD' => 'Стандартное',
+    'QUALITY_MIN' => 'Минимальное',
+    'SAMPLE_RATE' => 'Частота дискретизации, Гц:',
+    'REST_FORMAT' => 'Формат аудио REST API:'
 );
 foreach ($dictionary as $k => $v) {
     if (!defined('LANG_' . $k)) {

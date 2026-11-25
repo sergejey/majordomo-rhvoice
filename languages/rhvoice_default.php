@@ -29,7 +29,15 @@ $dictionary = array(
     'HELP_BUILD' => 'Then build RHVoice:',
     'HELP_CHECK' => 'You can check it like this:',
     'HELP_OR' => 'or like this:',
-    'HELP_PHRASE' => 'Hello'
+    'HELP_PHRASE' => 'Hello',
+    'PITCH' => 'Pitch, % (100 = normal):',
+    'VOLUME' => 'Volume, % (100 = normal):',
+    'QUALITY' => 'Speech quality:',
+    'QUALITY_MAX' => 'Maximum',
+    'QUALITY_STANDARD' => 'Standard',
+    'QUALITY_MIN' => 'Minimum',
+    'SAMPLE_RATE' => 'Sample rate, Hz:',
+    'REST_FORMAT' => 'REST API audio format:'
 );
 foreach ($dictionary as $k => $v) {
     if (!defined('LANG_' . $k)) {
